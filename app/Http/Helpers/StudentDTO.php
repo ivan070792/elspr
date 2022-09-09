@@ -19,7 +19,7 @@ class StudentDTO{
     public Carbon $order_date;
     public string $order_num;
 
-    function __construct(string $fio, Carbon $date, string $program, string $spec, int $course, int $group, string $form_edu, string $form_pay, Carbon $date_edu_start, Carbon $date_edu_end, Carbon $order_date, string $order_num){
+    function __construct(string $fio, Carbon $date, string $program, string $spec, int $course, int $group, string $form_edu, string $form_pay, Carbon $date_edu_start, Carbon $date_edu_end, Carbon $order_date, string $order_num, int $amount){
         $this->fio = $fio;
         $this->date = $date;
         $this->program = $program;
@@ -32,6 +32,7 @@ class StudentDTO{
         $this->date_edu_end = $date_edu_end;
         $this->order_date = $order_date;
         $this->order_num = $order_num;
+        $this->amount = $amount;
 
     }
 
@@ -70,5 +71,8 @@ class StudentDTO{
     }
     public function get_order_num(){
         return $this->order_num;
+    }
+    public function get_amount(){
+        return $this->amount;
     }
 }

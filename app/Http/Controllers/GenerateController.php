@@ -50,7 +50,8 @@ class GenerateController extends Controller
                             date_edu_start: Carbon::createFromFormat('m/d/Y', $student[8]),
                             date_edu_end: Carbon::createFromFormat('m/d/Y', $student[9]),
                             order_date: Carbon::createFromFormat('m/d/Y', $student[10]),
-                            order_num: $student[11]
+                            order_num: $student[11],
+                            amount:$student[12], 
                         );
                         $students[] = $obj;
                     }
