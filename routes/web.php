@@ -20,7 +20,14 @@ Route::get('/', function () {
 
 Route::post('/generate', [\App\Http\Controllers\GenerateController::class, 'generate'])->name('generate');
 
+
 Route::get('/download-example', function(){
+    try {
         return Storage::download('students.xlsx');
+    } catch (Exception $e) {
+        abort(404);
+    }
     }
 );
+
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
