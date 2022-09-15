@@ -31,13 +31,14 @@ class GenerateController extends Controller
         if($request->doc_type == 'word'){
            
           $doc = Documents::create_word($user_objects_array, $documetn_date );
-
+            // dd(storage_path().'/app/'.$doc);
           $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
          ];
 
          try {
-            return Storage::download($doc, 'Справка.docx');
+            // return Storage::download($doc, 'Справка.docx');
+            return response()->download(storage_path().'/app/'.$doc, 'Справка.docx', $headers)->deleteFileAfterSend(true);
          } catch (Exception $e) {
             return back()->withError('Файл не найден')->withInput();
          }
