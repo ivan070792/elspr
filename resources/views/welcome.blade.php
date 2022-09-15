@@ -34,7 +34,7 @@
                                 <input class="form-control" name='file' type="file" id="formFile" required>
                             </div>
                             <div class="col-lg-4 col-md-12 mb-3">
-                                <label for="documetn_date" class="form-label">Дата созданяи документов</label>
+                                <label for="documetn_date" class="form-label">Дата создания документов</label>
                                 <input class="form-control" name='documetn_date' type="date" id="documetn_date" value="{{ Carbon\Carbon::now()->format('Y-m-d') }}">
                             </div>
                             <div class="col-md-12 col-lg-12 mb-3 d-md-flex">
