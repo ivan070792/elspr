@@ -74,7 +74,7 @@ class GenerateController extends Controller
      * input @param array $students_array
      * return array $student_objects_array
      */
-    private function create_user_objects_array(array $students_array) :array{
+    private function create_user_objects_array(array $students_array){
         $users_object_array = [];
         // dd($students_array);
         foreach($students_array as $index => $student){

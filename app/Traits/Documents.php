@@ -48,7 +48,7 @@ trait Documents{
                 $textrun->addText('   '.$user_object->get_program().'   ', ['name' => 'Times New Roman', 'size'=> 14, 'underline' => 'single'], ['spaceAfter' => 0]);
                 
                 $section->addText($user_object->get_spec(), ['name' => 'Times New Roman', 'size'=> 14], ['spaceAfter' => 0]);
-                $section->addText('и является студетом '.$user_object->get_course().' курса '. $user_object->get_group().' группы', ['name' => 'Times New Roman', 'size'=> 14], ['spaceAfter' => 0]);
+                $section->addText('и является студентом '.$user_object->get_course().' курса '. $user_object->get_group().' группы', ['name' => 'Times New Roman', 'size'=> 14], ['spaceAfter' => 0]);
                 
                 $textrun = $section->addTextRun('pStyle');
                 $textrun->addText('Форма обучения: ', ['name' => 'Times New Roman', 'size'=> 14],['spaceAfter' => 0]);

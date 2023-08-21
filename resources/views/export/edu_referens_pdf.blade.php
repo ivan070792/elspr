@@ -35,7 +35,7 @@
         $a = 1; // счетчик справок
     @endphp
     @foreach ($students as $student)
-        {{-- @dd(1 >= $student->amount) --}}
+        {{-- @dd($student) --}}
         @if ($student->amount > 0)  
             @for ($b = 1; $b <= $student->amount; $b++)
             <p class="text-center fz-12 lh-1">МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ АЛТАЙСКОГО КРАЯ</p>

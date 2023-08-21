@@ -11,7 +11,7 @@ class StudentDTO{
     public string $program;
     public string $spec;
     public int $course;
-    public int $group;
+    public string $group;
     public string $form_edu;
     public string $form_pay;
     public Carbon $date_edu_start;
@@ -19,7 +19,7 @@ class StudentDTO{
     public Carbon $order_date;
     public string $order_num;
 
-    function __construct(string $fio, Carbon $date, string $program, string $spec, int $course, int $group, string $form_edu, string $form_pay, Carbon $date_edu_start, Carbon $date_edu_end, Carbon $order_date, string $order_num, int $amount){
+    function __construct(string $fio, Carbon $date, string $program, string $spec, int $course, string $group, string $form_edu, string $form_pay, Carbon $date_edu_start, Carbon $date_edu_end, Carbon $order_date, string $order_num, int $amount){
         $this->fio = $fio;
         $this->date = $date;
         $this->program = $program;
