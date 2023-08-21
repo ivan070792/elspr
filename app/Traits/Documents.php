@@ -94,8 +94,10 @@ trait Documents{
                 if($count % 2 == 0){
                     $section->addPageBreak();
                 }else{
-                    $section->addText('', ['name' => 'Times New Roman', 'size'=> 14], ['spaceAfter' => 0]);
-                    $section->addLine(['weight' => 1, 'width' => 400, 'height' => 0]);
+                    if(count($user_objects_array) != 1){
+                        $section->addText('', ['name' => 'Times New Roman', 'size'=> 14], ['spaceAfter' => 0]);
+                        $section->addLine(['weight' => 1, 'width' => 400, 'height' => 0]);
+                    }
                 }
             }
 
