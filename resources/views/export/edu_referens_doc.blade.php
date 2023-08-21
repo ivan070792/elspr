@@ -28,7 +28,7 @@
             <p style="float:left">Директор</p>
             <p style="float:right">М. Б. Самолетов</p>
             <br>
-            @if ($a%2 != 0) <hr style="margin-top:30px"> @elseif($a != count($students)) <div style="page-break-before: always;"></div> @endif    
+            @if ($a%2 != 0 && $student->amount == 1) <hr style="margin-top:30px"> @elseif($a != count($students)) <div style="page-break-before: always;"></div> @endif    
             @endfor
         @endif
     @endforeach
