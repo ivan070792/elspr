@@ -16,6 +16,10 @@
 
 Для добавления шрифтов нужно:
 
+```
+https://github.com/barryvdh/laravel-dompdf/issues/875#issuecomment-1861454665
+```
+
 1. Скачать шрифт
 2. Скачать утилиту load_font.php
 3. Развернуть шрифты командой php load_font.php 'Font Name' 'path_to_font\font.ttf'
