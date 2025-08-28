@@ -26,7 +26,7 @@
         </div>
         <div class="row row-cols-4 row-cols-md-4 g-4">
             <div class="col">
-                <a class="card" href="/generate">
+                <a class="card" href="{{ route('documents.elspr.form') }}">
                     <div class="card-body">
                         <h4 class="card-title text-center">Пакетная генерация справок для обучающихся</h4>
                     </div>

@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\{DocumentController, GenerateController};
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +17,8 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
-
-Route::post('/generate', [\App\Http\Controllers\GenerateController::class, 'generate'])->name('generate');
 
 
 Route::get('/download-example', function(){
@@ -30,4 +30,15 @@ Route::get('/download-example', function(){
     }
 );
 
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+Auth::routes();
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+    Route::get('/documents/elspr/form', [DocumentController::class, 'elsprForm'])->name('documents.elspr.form');
+    Route::get('/documents/elspr/download-example', [DocumentController::class, 'downloadExample'])->name('documents.elspr.example');
+    Route::get('/documents/elspr/generate', [GenerateController::class, ])->name('documents.elspr.example');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('/generate', [\App\Http\Controllers\GenerateController::class, 'generate'])->name('generate');
+});
+
+

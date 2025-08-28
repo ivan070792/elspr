@@ -10,6 +10,18 @@
  - phpoffice/phpspreadsheet - для парсинга excel документа
  - phpoffice/phpword - для генерации doc документа
 
+## Процесс разворачивания
+
+1. Клонировать репозиторий
+2. Выполнить composer install
+3. Выполнить npm i
+4. Создать env файл
+5. Настроить подключение к БД
+6. Выполнить php artisan key:generate
+6. Выполнить php artisan migrate
+8. Сoздать пользователя командой user:create
+9. Выполнить npm run build
+
 ## Особенности разворачивания
 
 В пакете laravel-dompdf отсутвуют нужные шрифты. Их необходимо добавить.

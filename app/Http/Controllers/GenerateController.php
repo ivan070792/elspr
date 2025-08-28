@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 
 class GenerateController extends Controller
 {
@@ -46,7 +45,7 @@ class GenerateController extends Controller
             ]);
         }
 
-        $studentsData = $this->readExelFile($validated['file']);
+        $studentsData = $documentService->readExelFile($validated['file']);
 
         $usersArray = $this->prepareUserData($studentsData);
         $date = Carbon::createFromFormat('Y-m-d', $validated['document_date']);
@@ -56,7 +55,6 @@ class GenerateController extends Controller
         }
         if($validated['doc_type'] == 'word'){
             $doc = $documentService->createWord($usersArray, $date);
-            // dd(storage_path().'/app/'.$doc);
           $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
          ];
@@ -68,18 +66,6 @@ class GenerateController extends Controller
          }
 
         }
-    }
-
-    private function readExelFile($file) :array
-    {
-
-        $reader = new ReaderXlsx(); // Получаем объект считывателя
-        $excel = $reader->load($file); // Читаем файл
-        $sheet = $excel->getActiveSheet(); // Открываем активную книгу
-        $data = $sheet->toArray(); // Преобразуем книгу в неассоциативный массив
-        unset($data[0]); // Убираем заголовки (1 строка) таблицы из массива
-
-        return $data;
     }
     /**
      * @return StudentDTO[]
