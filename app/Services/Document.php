@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Dto\StudentDTO;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 use PhpOffice\PhpWord\PhpWord;
 
 class Document
@@ -104,5 +105,16 @@ class Document
         $tmp_doc_file = uniqid().'.docx';
         $phpWord->save(storage_path('app/'.$tmp_doc_file));
         return $tmp_doc_file;
+    }
+    public function readExelFile($file) :array
+    {
+
+        $reader = new ReaderXlsx(); // Получаем объект считывателя
+        $excel = $reader->load($file); // Читаем файл
+        $sheet = $excel->getActiveSheet(); // Открываем активную книгу
+        $data = $sheet->toArray(); // Преобразуем книгу в неассоциативный массив
+        unset($data[0]); // Убираем заголовки (1 строка) таблицы из массива
+
+        return $data;
     }
 }
