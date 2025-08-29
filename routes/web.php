@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\{DocumentController, GenerateController};
+use App\Http\Controllers\Documents\EduSertificateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,27 +19,25 @@ use App\Http\Controllers\{DocumentController, GenerateController};
 
 Route::get('/', function () {
     return view('auth.login');
-});
+})->middleware('guest');
 
-
-Route::get('/download-example', function(){
-    try {
-        return Storage::download('students.xlsx');
-    } catch (Exception $e) {
-        abort(404);
-    }
-    }
-);
-
-Auth::routes();
+Auth::routes(['register' => false, 'reset' => false]);
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
-    Route::get('/documents/elspr/form', [DocumentController::class, 'elsprForm'])->name('documents.elspr.form');
-    Route::get('/documents/elspr/download-example', [DocumentController::class, 'downloadExample'])->name('documents.elspr.example');
-    Route::get('/documents/elspr/generate', [GenerateController::class, ])->name('documents.elspr.example');
+
+    Route::group(['prefix' =>'dashboard'], function () {
+        Route::group(['prefix' =>'edu-sertificate'], function () {
+            Route::get('index', [EduSertificateController::class, 'indexForm'])
+                ->name('documents.edu_sertificate.index');
+            Route::get('download-example', [EduSertificateController::class, 'downloadExampleXlsx'])
+                ->name('documents.edu_sertificate.download_example');
+            Route::post('index-form-request', [EduSertificateController::class, 'indexFormRequest'])
+                ->name('documents.edu_sertificate.index_form_request');
+        });
+    });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::post('/generate', [\App\Http\Controllers\GenerateController::class, 'generate'])->name('generate');
+
 });
 
 
