@@ -75,28 +75,28 @@ class GenerateController extends Controller
         $result = [];
         foreach($data as $index => $student){
             try{
-                    if($student[0] != null){
-                            $obj = new StudentDTO(
-                            fullname:$student[0],
-                            birthDate:Carbon::createFromFormat('m/d/Y', $student[1]),
-                            program: $student[2],
-                            specialty: $student[3],
-                            course: $student[4],
-                            group: $student[5],
-                            formEdu: $student[6],
-                            formPay: $student[7],
-                            dateStartEdu: Carbon::createFromFormat('m/d/Y', $student[8]),
-                            dateEndEdu: Carbon::createFromFormat('m/d/Y', $student[9]),
-                            orderDate: Carbon::createFromFormat('m/d/Y', $student[10]),
-                            orderNum: $student[11],
-                            amount:$student[12],
-                        );
-                        $result[] = $obj;
-                    }
+                if($student[0] != null){
+                        $obj = new StudentDTO(
+                        fullname:$student[0],
+                        birthDate:Carbon::createFromFormat('m/d/Y', $student[1]),
+                        program: $student[2],
+                        specialty: $student[3],
+                        course: $student[4],
+                        group: $student[5],
+                        formEdu: $student[6],
+                        formPay: $student[7],
+                        dateStartEdu: Carbon::createFromFormat('m/d/Y', $student[8]),
+                        dateEndEdu: Carbon::createFromFormat('m/d/Y', $student[9]),
+                        orderDate: Carbon::createFromFormat('m/d/Y', $student[10]),
+                        orderNum: $student[11],
+                        amount:$student[12],
+                    );
+                    $result[] = $obj;
                 }
-                catch (Exception $e) {
-                            return back()->withError('Ошибка в форме данных на строчке '.$index/*$e->getMessage()*/)->withInput();
-                }
+            }
+            catch (Exception $e) {
+                        return back()->withError('Ошибка в форме данных на строчке '.$index/*$e->getMessage()*/)->withInput();
+            }
         }
         return $result;
     }
