@@ -20,7 +20,7 @@ class EduSertificateIndexFormRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation()
+    protected function prepareForValidation(): array
     {
         $this->merge([
             'document_date' => Carbon::parse($this->document_date),
