@@ -8,9 +8,10 @@ class StudentDTO{
 
     function __construct(
         private string $fullname,
-        private Carbon $birthDate, private string $program,
+        private Carbon $birthDate,
+        private string $program,
         private string $specialty,
-        private int $course,
+        private int    $course,
         private string $group,
         private string $formEdu,
         private string $formPay,
@@ -18,7 +19,7 @@ class StudentDTO{
         private Carbon $dateEndEdu,
         private Carbon $orderDate,
         private string $orderNum,
-        private int $amount) {
+        public int     $amount) {
 
     }
 

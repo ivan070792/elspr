@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Services;
+namespace App\Actions\Documents;
 
-use App\Dto\StudentDTO;
+use App\Data\Student\StudentData;
 use Carbon\Carbon;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 use PhpOffice\PhpWord\PhpWord;
 
-class Document
+class GenerateEducationSertificateDoc
 {
 
     /**
-     * @param StudentDTO[] $userObjectsArray
-     * @param Carbon $date
+     * @param iterable<StudentData> $students
+     * @param Carbon   $date
      *
-     * @return string
+     * @return string|null
      */
-    public function createWord(array $userObjectsArray, Carbon $date): string
+    public function __invoke(iterable $students, Carbon $date): ?string
     {
-
         $phpWord = new PHPWord('Word2007');
         $phpWord->setDefaultFontName('Times New Roman');
         $phpWord->setDefaultFontSize(14);
@@ -27,7 +25,7 @@ class Document
         $phpWord->addParagraphStyle($paragraphStyleName, array('spaceAfter' => 0));
         $count = 0;
         $section = $phpWord->addSection(['marginTop' => 14*56.7, 'marginBottom' => 13*56.7, 'marginLeft' => 12.5*56.7, 'marginRight' => 12.5*56.7]);
-        foreach($userObjectsArray as $index => $user){
+        foreach($students as $index => $user){
             $count++;
             $section->addText('МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ АЛТАЙСКОГО КРАЯ', ['size'=> 12], ['align' => 'center', 'spaceAfter' => 0]);
             $section->addText('краевое государственное бюджетное профессиональное образовательное учреждение', ['size'=> 12], ['align' => 'center', 'spaceAfter' => 0]);
@@ -43,19 +41,19 @@ class Document
             $row1->addCell()->addText($date->isoFormat('« D » MMMM YYYY г.', 'Do MMMM'), ['size'=> 14], ['align' => 'left']);
             $row1->addCell()->addText('№__________', ['size'=> 14], ['align' => 'right']);
             $textrun = $section->addTextRun('pStyle');
-            $textrun->addText($user->getFullname(), ['size'=> 14, 'underline' => 'single'], ['spaceAfter' => 0]);
+            $textrun->addText($user->fullname, ['size'=> 14, 'underline' => 'single'], ['spaceAfter' => 0]);
             $textrun->addText(',    ', ['size'=> 14], ['spaceAfter' => 0]);
-            $textrun->addText($user->getBirthDate()->isoFormat('« D » MMMM YYYY года рождения', 'Do MMMM'), ['size'=> 14], ['spaceAfter' => 0]);
+            $textrun->addText($user->birthDate->isoFormat('« D » MMMM YYYY года рождения', 'Do MMMM'), ['size'=> 14], ['spaceAfter' => 0]);
             $section->addText('обучается в КГБПОУ «БГПК имени В.К. Штильке» по основной образовательной ', ['size'=> 14], ['spaceAfter' => 0]);
             $textrun = $section->addTextRun('pStyle');
             $textrun->addText('программе   ', [], ['spaceAfter' => 0]);
-            $textrun->addText('   '.$user->getProgram().'   ', ['underline' => 'single'], ['spaceAfter' => 0]);
-            $section->addText($user->getSpecialty(), [],  ['spaceAfter' => 0]);
-            $section->addText('и является студентом '.$user->getCourse().' курса '. $user->getGroup().' группы', ['size'=> 14], ['spaceAfter' => 0]);
+            $textrun->addText('   '.$user->program.'   ', ['underline' => 'single'], ['spaceAfter' => 0]);
+            $section->addText($user->specialty, [],  ['spaceAfter' => 0]);
+            $section->addText('и является студентом '.$user->course.' курса '. $user->group.' группы', ['size'=> 14], ['spaceAfter' => 0]);
 
             $textrun = $section->addTextRun('pStyle');
             $textrun->addText('Форма обучения: ', [],  ['spaceAfter' => 0]);
-            if($user->getFormEdu() == "Очная"){
+            if($user->formEdu == "Очная"){
                 $textrun->addText('очная', ['underline' => 'single'], ['spaceAfter' => 0]);
                 $textrun->addText('/заочная', [],   ['spaceAfter' => 0]);
             }else{
@@ -63,7 +61,7 @@ class Document
                 $textrun->addText('заочная', ['underline' => 'single'], ['spaceAfter' => 0]);
             }
 
-            if($user->getFormPay() == 'Бюджет'){
+            if($user->formPay == 'Бюджет'){
                 $textrun->addText(' (', [],  ['spaceAfter' => 0]);
                 $textrun->addText('бюджет', ['underline' => 'single'], ['spaceAfter' => 0]);
                 $textrun->addText('/платно по договору', [],  ['spaceAfter' => 0]);
@@ -76,14 +74,14 @@ class Document
             }
             $textrun = $section->addTextRun('pStyle');
             $textrun->addText('Срок обучения с ', [],  ['spaceAfter' => 0]);
-            $textrun->addText($user->getDateStartEdu()->format('« d » m Y г.'), [],  ['spaceAfter' => 0]);
+            $textrun->addText($user->dateStartEdu->format('« d » m Y г.'), [],  ['spaceAfter' => 0]);
             $textrun->addText(' по ', [],  ['spaceAfter' => 0]);
-            $textrun->addText($user->getDateEndEdu()->format('« d » m Y г.,'), [],  ['spaceAfter' => 0]);
+            $textrun->addText($user->dateEndEdu->format('« d » m Y г.,'), [],  ['spaceAfter' => 0]);
 
             $textrun = $section->addTextRun('pStyle');
             $textrun->addText('зачислен(а) ', [],  ['spaceAfter' => 0]);
-            $textrun->addText(' приказом от '. $user->getOrderDate()->isoFormat('« D » MMMM YYYY г.', 'Do MMMM г.').' ' , [],  ['spaceAfter' => 0]);
-            $textrun->addText('№ '. $user->getOrderNum().'.' , [], ['spaceAfter' => 0]);
+            $textrun->addText(' приказом от '. $user->orderDate->isoFormat('« D » MMMM YYYY г.', 'Do MMMM г.').' ' , [],  ['spaceAfter' => 0]);
+            $textrun->addText('№ '. $user->orderNum.'.' , [], ['spaceAfter' => 0]);
             $section->addText('Справка выдана для предоставления по месту требования.', [], ['spaceAfter' => 0]);
             $section->addText('', [], ['spaceAfter' => 0]);
 
@@ -98,23 +96,8 @@ class Document
                 $section->addText('', [], ['spaceAfter' => 0]);
                 $section->addLine(['weight' => 1, 'width' => 400, 'height' => 0]);
             }
-
         }
-
-
         $tmp_doc_file = uniqid().'.docx';
-        $phpWord->save(storage_path('app/'.$tmp_doc_file));
-        return $tmp_doc_file;
-    }
-    public function readExelFile($file) :array
-    {
-
-        $reader = new ReaderXlsx(); // Получаем объект считывателя
-        $excel = $reader->load($file); // Читаем файл
-        $sheet = $excel->getActiveSheet(); // Открываем активную книгу
-        $data = $sheet->toArray(); // Преобразуем книгу в неассоциативный массив
-        unset($data[0]); // Убираем заголовки (1 строка) таблицы из массива
-
-        return $data;
+        return $phpWord->save(storage_path('app/'.$tmp_doc_file)) ? $tmp_doc_file : false;
     }
 }
