@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container h-100">
-
+        <elspr-form-page></elspr-form-page>
         <div class="row my-4">
             <div class="col-12">
                 <h1 class="text-center m-4">Пакетная генерация справок для обучающихся</h1>
