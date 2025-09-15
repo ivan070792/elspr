@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -19,5 +20,14 @@ class DocumentController extends Controller
         } catch (NotFoundHttpException $e) {
             abort(404);
         }
+    }
+
+    public function testFetch(): JsonResponse
+    {
+        $result = [
+            'a' => 1,
+            'b' => 'sdsdasdasdasd'
+        ];
+        return response()->json($result);
     }
 }

@@ -6,12 +6,17 @@
 
 @section('content')
     <div class="container h-100">
-        <elspr-form-page></elspr-form-page>
         <div class="row my-4">
             <div class="col-12">
                 <h1 class="text-center m-4">Пакетная генерация справок для обучающихся</h1>
             </div>
         </div>
+        <elspr-form-page
+            :generate-link="`{{ route('documents.elspr.generate') }}`"
+            :download-example-link="`{{ route('documents.elspr.example') }}`"
+            :default-current-date="`{{ Carbon\Carbon::now()->format('Y-m-d') }}`"
+        >
+        </elspr-form-page>
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-6 bg-light border p-4 shadow-sm">
                 @if ($errors->any())
@@ -26,7 +31,7 @@
                 @if (session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
-                    <form action="{{ route('generate') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('documents.elspr.generate') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-8 col-md-12 mb-3">

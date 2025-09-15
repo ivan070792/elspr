@@ -36,9 +36,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
     Route::get('/documents/elspr/form', [DocumentController::class, 'elsprForm'])->name('documents.elspr.form');
     Route::get('/documents/elspr/download-example', [DocumentController::class, 'downloadExample'])->name('documents.elspr.example');
-    Route::get('/documents/elspr/generate', [GenerateController::class, ])->name('documents.elspr.example');
+    Route::post('/documents/elspr/generate', [GenerateController::class, 'generate' ])->name('documents.elspr.generate');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::post('/generate', [\App\Http\Controllers\GenerateController::class, 'generate'])->name('generate');
 });
+
+Route::get('/test', [DocumentController::class, 'testFetch']);
 
 

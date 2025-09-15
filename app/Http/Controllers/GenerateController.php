@@ -29,7 +29,9 @@ class GenerateController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         // Получить проверенные данные...
