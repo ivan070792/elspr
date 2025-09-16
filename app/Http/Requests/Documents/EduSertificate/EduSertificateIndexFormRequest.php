@@ -9,18 +9,18 @@ use Illuminate\Foundation\Http\FormRequest;
 class EduSertificateIndexFormRequest extends FormRequest
 {
 
-    protected $dataClass = EduSertificateIndexFormData::class;
+    protected string $dataClass = EduSertificateIndexFormData::class;
 
     public function rules(): array
     {
         return [
             'file' => 'required|file|mimes:xlsx',
             'document_date' => 'date|required',
-            'doc_type' => 'required|in:pdf,word',
+            'doc_type' => 'required|in:PDF,DOC',
         ];
     }
 
-    protected function prepareForValidation(): array
+    protected function prepareForValidation(): void
     {
         $this->merge([
             'document_date' => Carbon::parse($this->document_date),

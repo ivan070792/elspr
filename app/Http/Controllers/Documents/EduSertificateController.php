@@ -38,12 +38,12 @@ class EduSertificateController extends Controller
         $prepareFileData = $documentService->getPrepareFileData($fileData);
         $students = StudentData::collection($prepareFileData);
 
-        if($formData->docType === 'pdf'){
+        if($formData->docType === 'PDF'){
             $documentAction = new GenerateEducationSertificatePdf();
             $pdf = $documentAction($students, $formData->documentDate);
             return $pdf->stream();
         }
-        if($formData->docType === 'word'){
+        if($formData->docType === 'DOC'){
             $documentAction = new GenerateEducationSertificateDoc();
             $file = $documentAction($students, $formData->documentDate);
             $headers = [
