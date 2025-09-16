@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Dto\StudentDTO;
-use App\Services\Document;
-use App\Traits\Documents;
+use App\Services\DocumentService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Utils\FileUtils;
+use App\Actions\Documents\GenerateEducationSertificateDoc;
 
 class GenerateController extends Controller
 {
@@ -19,7 +20,11 @@ class GenerateController extends Controller
     /**
      * @throws ValidationException
      */
-    public function generate(Request $request, Document $documentService){
+    public function generate(
+        Request $request,
+        DocumentService $documentService,
+        GenerateEducationSertificateDoc $generateEducationSertificateDoc
+    ) {
 
         //TODO Переделать валидацию
         $validator = Validator::make($request->all(), [
@@ -47,7 +52,7 @@ class GenerateController extends Controller
             ]);
         }
 
-        $studentsData = $documentService->readExelFile($validated['file']);
+        $studentsData = FileUtils::readExelFile($validated['file']);
 
         $usersArray = $this->prepareUserData($studentsData);
         $date = Carbon::createFromFormat('Y-m-d', $validated['document_date']);
@@ -56,7 +61,7 @@ class GenerateController extends Controller
             return $pdf->stream();
         }
         if($validated['doc_type'] == 'DOC'){
-            $doc = $documentService->createWord($usersArray, $date);
+            $doc = $generateEducationSertificateDoc($usersArray, $date);
           $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
          ];
