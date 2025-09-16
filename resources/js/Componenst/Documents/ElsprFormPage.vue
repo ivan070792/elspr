@@ -109,7 +109,6 @@ const submitForm = async (fileType: FileType) => {
                     <div class="col-md-12 col-lg-12 mb-3 d-md-flex">
                         <button @click.prevent="submitForm(FileType.DOC)"
                                 type="button"
-                                name="doc_type"
                                 class="btn btn-primary me-2"
                                 :disabled="isSubmitFormProcessing">
                             <word-icon v-if="!isSubmitFormProcessing" />
