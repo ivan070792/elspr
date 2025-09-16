@@ -14,6 +14,23 @@ window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+// Переопределяем fetch для автоматического добавления токена
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+    const [url, options = {}] = args;
+
+    // Добавляем заголовки CSRF
+    options.headers = {
+        ...options.headers,
+        'X-CSRF-TOKEN': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+
+    return originalFetch.call(window, url, options);
+};
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

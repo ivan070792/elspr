@@ -18,26 +18,16 @@ use App\Http\Controllers\Documents\EduSertificateController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
-})->middleware('guest');
+    return redirect()->route('dashboard');
+});
 
 Auth::routes(['register' => false, 'reset' => false]);
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
-
-    Route::group(['prefix' =>'dashboard'], function () {
-        Route::group(['prefix' =>'edu-sertificate'], function () {
-            Route::get('index', [EduSertificateController::class, 'indexForm'])
-                ->name('documents.edu_sertificate.index');
-            Route::get('download-example', [EduSertificateController::class, 'downloadExampleXlsx'])
-                ->name('documents.edu_sertificate.download_example');
-            Route::post('index-form-request', [EduSertificateController::class, 'indexFormRequest'])
-                ->name('documents.edu_sertificate.index_form_request');
-        });
-    });
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/documents/elspr/form', [DocumentController::class, 'elsprForm'])->name('documents.elspr.form');
+    Route::get('/documents/elspr/download-example', [DocumentController::class, 'downloadExample'])->name('documents.elspr.example');
+    Route::post('/documents/elspr/generate', [GenerateController::class, 'generate' ])->name('documents.elspr.generate');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 });
-
 
