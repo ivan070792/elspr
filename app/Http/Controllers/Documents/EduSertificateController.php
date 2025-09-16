@@ -33,7 +33,7 @@ class EduSertificateController extends Controller
         $formData = $request->getData();
         $fileData = FileUtils::readExelFile($formData->file, false);
         if (!$fileData) {
-            return back()->withErrors(['Неизвестный тип документа'])->withInput();
+            return response()->json(['error' => 'Не удалось прочитать файл'], 400);
         }
         $prepareFileData = $documentService->getPrepareFileData($fileData);
         $students = StudentData::collection($prepareFileData);
@@ -54,10 +54,10 @@ class EduSertificateController extends Controller
             try {
                 return response()->download(storage_path().'/app/'.$file, 'Справка.docx', $headers)->deleteFileAfterSend(true);
             } catch (Exception $e) {
-                return back()->withErrors(['error' => 'Файл не найден'])->withInput();
+                return response()->json(['error' => 'Файл не найден'], 400);
             }
         }
-        return back()->withErrors(['Неизвестный тип документа'])->withInput();
+        return response()->json(['error' => 'Неизвестный тип документа'], 400);
     }
 
     /*
