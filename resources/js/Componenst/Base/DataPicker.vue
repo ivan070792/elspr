@@ -1,46 +1,40 @@
-<script lang="ts">
-import {defineComponent} from 'vue'
+<script setup lang="ts">
 
-export default defineComponent({
-    name: "DataPicker",
-    emits: ['update:input'],
-    props: {
-        currentDate: {
-            type: String,
-            default: () => {
-                return new Date().toISOString().slice(0, 10)
-            }
-        },
-        inputName: {
-            type: String,
-            default: () => {
-                return 'date'
-            }
-        },
-        inputId: {
-            type: String,
-            default: () => {
-                return 'date'
-            }
-        },
-        inputClass: {
-            type: String,
-            default: () => {
-                return '';
-            }
-        }
-    },
+import { defineEmits, defineProps, withDefaults } from 'vue'
+interface DataPickerProps {
+    currentDate?: string
+    inputName?: string
+    inputId?: string
+    inputClass?: string
+};
 
-})
+const props = withDefaults(defineProps<DataPickerProps>(), {
+    currentDate: () => new Date().toISOString().slice(0, 10),
+    inputName: 'date',
+    inputId: 'date',
+    inputClass: ''
+});
+
+const emit = defineEmits<{
+    (e: 'update:input', value: string): void
+}>()
+
+const handleInput = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    emit('update:input', target.value)
+}
+
 </script>
 
 <template>
     <div class="datapicker-wrap">
-        <input :class="`form-control ${inputClass}`"
-               :name="inputName"
-               @input="$emit('update:input', $event.target.value)"
-               type="date"
-               :value="currentDate"
-               :id="inputId">
+        <input
+            :class="`form-control ${inputClass}`"
+            :name="inputName"
+            @input="handleInput"
+            type="date"
+            :value="currentDate"
+            :id="inputId"
+        />
     </div>
 </template>

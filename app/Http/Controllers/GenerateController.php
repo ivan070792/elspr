@@ -25,7 +25,7 @@ class GenerateController extends Controller
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:xlsx',
             'document_date' => 'date|required',
-            'doc_type' => 'required|in:pdf,word',
+            'doc_type' => 'required|in:PDF,DOC',
         ]);
 
         if ($validator->fails()) {
@@ -51,11 +51,11 @@ class GenerateController extends Controller
 
         $usersArray = $this->prepareUserData($studentsData);
         $date = Carbon::createFromFormat('Y-m-d', $validated['document_date']);
-        if($validated['doc_type'] == 'pdf'){
+        if($validated['doc_type'] == 'PDF'){
             $pdf = PDF::loadView('export.edu_referens_pdf', ['students' => $usersArray, 'documetn_date' => $date]);
             return $pdf->stream();
         }
-        if($validated['doc_type'] == 'word'){
+        if($validated['doc_type'] == 'DOC'){
             $doc = $documentService->createWord($usersArray, $date);
           $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

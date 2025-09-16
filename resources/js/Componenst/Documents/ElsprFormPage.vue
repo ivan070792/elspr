@@ -1,86 +1,80 @@
-<script lang="ts">
-import {defineComponent} from 'vue'
-import DataPicker from "../Base/DataPicker.vue";
-import UploadFiles from "../Base/UploadFiles.vue";
-import DownloadFileIcon from "../Icon/DownloadFileIcon.vue";
-import WordIcon from "../Icon/WordIcon.vue";
-import { downloadFile } from '../../Utils/fileDownload'
+<script setup lang="ts">
+import {defineProps, ref} from 'vue';
+import UploadFiles from '../Base/UploadFiles.vue';
+import {downloadFile} from '../../Utils/fileDownload';
+import downloadFileIcon from '../Icon/DownloadFileIcon.vue';
+import wordIcon from '../Icon/WordIcon.vue';
+import {FileType} from "../../Types/FileTypes";
 
-export default defineComponent({
-    name: "ElsprFormPage",
-    components: {
-        DataPicker,
-        UploadFiles,
-        DownloadFileIcon,
-        WordIcon,
-    },
-    props: {
-        generateLink: {
-            type: String,
-            required: true
-        },
-        downloadExampleLink: {
-            type: String,
-            required: true
-        },
-        defaultCurrentDate: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return{
-            a: 0,
-            errors: [],
-            files: [],
-            currentDate: this.defaultCurrentDate,
-        }
-    },
-    methods: {
-        async downloadExample() {
-            try {
-                await downloadFile(this.downloadExampleLink, 'my-file.pdf')
-                console.info('Файл скачан успешно')
-            } catch (error) {
-                console.error('Ошибка скачивания:', error)
-            }
-        },
-        async submitForm(fileType) {
-            this.errors = []
-            const formData = new FormData(document.querySelector('#form'));
-            formData.append('doc_type', fileType);
-            try {
-                if (this.files.length === 0) {
-                    this.errors.push('Выберите файл!');
-                    return false;
-                }
-                const response = await fetch(this.generateLink, {
-                    method: 'POST',
-                    body: formData
-                });
-                if (!response.ok) {
-                    this.errors.push('Ошибка при отправке формы');
-                    return false;
-                }
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'document.doc'; // Можно динамически задать имя файла
-                document.body.appendChild(a);
-                a.click();
+interface ElsprFormPageProps {
+    generateLink: string,
+    downloadExampleLink: string,
+    defaultCurrentDate: string
+}
 
-                // Очищаем
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                console.error('Ошибка:', error);
-                this.errors.push('Произошла ошибка при отправке формы')
-            }
+const props = defineProps<ElsprFormPageProps>();
 
-        }
+const errors = ref([]);
+const files = ref([]);
+const currentDate = ref(props.defaultCurrentDate);
+const form = ref<HTMLFormElement | null>(null);
+
+const downloadExample = async () => {
+    try {
+        await downloadFile(props.downloadExampleLink, 'example.xlsx')
+        console.info('Файл скачан успешно')
+    } catch (error) {
+        console.error('Ошибка скачивания:', error)
     }
-})
+}
+
+const submitForm = async (fileType: FileType) => {
+    errors.value = [];
+    if (!form.value){
+        console.error('Форма не найдена');
+        return false;
+    }
+    const formData = new FormData(form.value);
+    formData.append('doc_type', fileType.toString());
+    if (files.value.length === 0) {
+        errors.value.push('Выберите файл!');
+        return true
+    }
+
+    try {
+        const response = await fetch(props.generateLink, {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            errors.value.push('Ошибка при отправке формы');
+            return false;
+        }
+        const blob = await response.blob();
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'document.pdf'; // значение по умолчанию
+        if (contentDisposition) {
+            const matches = contentDisposition.match(/filename="?(.+)"?/);
+            if (matches?.[1]) {
+                filename = matches[1];
+            }
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename; // Устанавливаем имя файла
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Ошибка:', error);
+        errors.value.push('Произошла ошибка при отправке формы');
+    }
+}
+
+
 </script>
 
 <template>
@@ -89,7 +83,7 @@ export default defineComponent({
             <div v-if="errors.length">
                 <div v-for="error in errors" :key="error" class="alert alert-danger">{{ error }}</div>
             </div>
-            <form :action="generateLink" id="form" method="post" enctype="multipart/form-data">
+            <form :action="generateLink" id="form" ref="form" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-lg-8 col-md-12 mb-3">
                         <label for="formFile" class="form-label">Загрузите EXCEL форму с данными</label>
@@ -107,10 +101,9 @@ export default defineComponent({
                             v-model:input="currentDate" />
                     </div>
                     <div class="col-md-12 col-lg-12 mb-3 d-md-flex">
-                        <button @click.prevent="submitForm(`word`)"
+                        <button @click.prevent="submitForm(FileType.DOC)"
                                 type="submit"
                                 name="doc_type"
-                                value="word"
                                 class="btn btn-primary me-2">
                             <word-icon />
                             Сгенерировать WORD
