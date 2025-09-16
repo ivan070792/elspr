@@ -18,6 +18,7 @@ const props = defineProps<ElsprFormPageProps>();
 const errors = ref<string[]>([]);
 const files = ref<File[]>([]);
 const currentDate = ref(props.defaultCurrentDate);
+const isSubmitFormProcessing = ref(false);
 
 const formRef = ref<HTMLFormElement | null>(null);
 
@@ -42,7 +43,7 @@ const submitForm = async (fileType: FileType) => {
         errors.value.push('Выберите файл!');
         return;
     }
-
+    isSubmitFormProcessing.value = true;
     try {
         const response = await fetch(props.generateLink, {
             method: 'POST',
@@ -50,6 +51,7 @@ const submitForm = async (fileType: FileType) => {
         });
         if (!response.ok) {
             errors.value.push('Ошибка при отправке формы');
+            isSubmitFormProcessing.value = false;
             return;
         }
         const blob = await response.blob();
@@ -58,7 +60,7 @@ const submitForm = async (fileType: FileType) => {
         if (contentDisposition) {
             const matches = contentDisposition.match(/filename="?(.+)"?/);
             if (matches?.[1]) {
-                filename = matches[1];
+                filename = matches[1].split(';')[0]
             }
         }
         const url = window.URL.createObjectURL(blob);
@@ -70,9 +72,11 @@ const submitForm = async (fileType: FileType) => {
 
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        isSubmitFormProcessing.value = false;
     } catch (error) {
         console.error('Ошибка:', error);
         errors.value.push('Произошла ошибка при отправке формы');
+        isSubmitFormProcessing.value = false;
     }
 }
 
@@ -106,8 +110,10 @@ const submitForm = async (fileType: FileType) => {
                         <button @click.prevent="submitForm(FileType.DOC)"
                                 type="button"
                                 name="doc_type"
-                                class="btn btn-primary me-2">
-                            <word-icon />
+                                class="btn btn-primary me-2"
+                                :disabled="isSubmitFormProcessing">
+                            <word-icon v-if="!isSubmitFormProcessing" />
+                            <span v-else class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             Сгенерировать WORD
                         </button>
                         <a class="btn align-middle me-2"

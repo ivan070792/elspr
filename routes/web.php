@@ -17,23 +17,14 @@ use App\Http\Controllers\{DocumentController, GenerateController};
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect()->route('dashboard');
 });
 
-
-Route::get('/download-example', function(){
-    try {
-        return Storage::download('students.xlsx');
-    } catch (Exception $e) {
-        abort(404);
-    }
-    }
-);
-
-Auth::routes();
-
+Auth::routes([
+    'register' => false,
+]);
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/documents/elspr/form', [DocumentController::class, 'elsprForm'])->name('documents.elspr.form');
     Route::get('/documents/elspr/download-example', [DocumentController::class, 'downloadExample'])->name('documents.elspr.example');
     Route::post('/documents/elspr/generate', [GenerateController::class, 'generate' ])->name('documents.elspr.generate');
