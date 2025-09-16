@@ -5,6 +5,7 @@ import {downloadFile} from '../../Utils/fileDownload';
 import downloadFileIcon from '../Icon/DownloadFileIcon.vue';
 import wordIcon from '../Icon/WordIcon.vue';
 import {FileType} from "../../Types/FileTypes";
+import DataPicker from "../Base/DataPicker.vue";
 
 interface ElsprFormPageProps {
     generateLink: string,
@@ -14,10 +15,11 @@ interface ElsprFormPageProps {
 
 const props = defineProps<ElsprFormPageProps>();
 
-const errors = ref([]);
-const files = ref([]);
+const errors = ref<string[]>([]);
+const files = ref<File[]>([]);
 const currentDate = ref(props.defaultCurrentDate);
-const form = ref<HTMLFormElement | null>(null);
+
+const formRef = ref<HTMLFormElement | null>(null);
 
 const downloadExample = async () => {
     try {
@@ -30,15 +32,15 @@ const downloadExample = async () => {
 
 const submitForm = async (fileType: FileType) => {
     errors.value = [];
-    if (!form.value){
+    if (!formRef.value){
         console.error('Форма не найдена');
-        return false;
+        return;
     }
-    const formData = new FormData(form.value);
-    formData.append('doc_type', fileType.toString());
+    const formData = new FormData(formRef.value);
+    formData.append('doc_type', fileType.valueOf());
     if (files.value.length === 0) {
         errors.value.push('Выберите файл!');
-        return true
+        return;
     }
 
     try {
@@ -48,7 +50,7 @@ const submitForm = async (fileType: FileType) => {
         });
         if (!response.ok) {
             errors.value.push('Ошибка при отправке формы');
-            return false;
+            return;
         }
         const blob = await response.blob();
         const contentDisposition = response.headers.get('Content-Disposition');
@@ -83,14 +85,14 @@ const submitForm = async (fileType: FileType) => {
             <div v-if="errors.length">
                 <div v-for="error in errors" :key="error" class="alert alert-danger">{{ error }}</div>
             </div>
-            <form :action="generateLink" id="form" ref="form" method="post" enctype="multipart/form-data">
+            <form :action="generateLink" id="form" ref="formRef" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-lg-8 col-md-12 mb-3">
                         <label for="formFile" class="form-label">Загрузите EXCEL форму с данными</label>
                         <upload-files
                             :input-id="`formFile`"
                             :name="`file`"
-                            @update:input="(values) => files = values" />
+                            v-model:input="files" />
                     </div>
                     <div class="col-lg-4 col-md-12 mb-3">
                         <label for="document_date" class="form-label">Дата создания документов</label>
@@ -102,7 +104,7 @@ const submitForm = async (fileType: FileType) => {
                     </div>
                     <div class="col-md-12 col-lg-12 mb-3 d-md-flex">
                         <button @click.prevent="submitForm(FileType.DOC)"
-                                type="submit"
+                                type="button"
                                 name="doc_type"
                                 class="btn btn-primary me-2">
                             <word-icon />
